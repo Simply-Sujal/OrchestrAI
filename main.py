@@ -31,7 +31,7 @@ workflow.add_edge("greet", END)
 
 app = workflow.compile()
 
-input = {"question": "What is the role of MCP servers?"}
+input = {"question": "What are proxy servers ?"}
 
 final_output = app.invoke(input)
 
