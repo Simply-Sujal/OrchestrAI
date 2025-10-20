@@ -1,7 +1,9 @@
 from langgraph.graph import StateGraph, START, END
 from langchain_google_genai import ChatGoogleGenerativeAI
 from typing import TypedDict
+from tools.prd_generator_tool import prd_generator_tool
 from dotenv import load_dotenv
+
 import os
 load_dotenv()
 
@@ -10,32 +12,32 @@ model = os.getenv("GOOGLE_GEMINI_MODEL")
 
 llm = ChatGoogleGenerativeAI(model=model, api_key=google_api_key)
 
-class GraphState(TypedDict):
-    question: str
-    answer: str
+class OrchestrAIState(TypedDict):
+    user_input: str 
+    prd_text: str 
+    project_name: str
 
-def greet(state: GraphState):
-    qst = state["question"]
-    prompt = f"""
-        Answer the following question asked by the user {qst}, in a one liner sentence strictly in a more technical way.
+def prd_architect(state: OrchestrAIState):
     """
-    result = llm.invoke(prompt)
-    return {"answer": result.content}
+        Convert a user input into a strcutured PRD text.
+    """
+    return prd_generator_tool(state)
 
-workflow = StateGraph(state_schema=GraphState)
 
-workflow.add_node("greet", greet)
-workflow.add_edge(START, "greet")
-workflow.add_edge("greet", END)
+workflow = StateGraph(state_schema=OrchestrAIState)
+
+workflow.add_node("prd_architect", prd_architect)
+workflow.add_edge(START, "prd_architect")
+workflow.add_edge("prd_architect", END)
 
 
 app = workflow.compile()
 
-input = {"question": "What are proxy servers ?"}
+input = {"user_input": "create a basic todo list application"}
 
 final_output = app.invoke(input)
 
-print(final_output["answer"])
+print(final_output["prd_text"])
 
 
 

@@ -1,6 +1,7 @@
 import asana
 
 from typing import Dict, List
+from adapter.asana.service import AsanaService
 from adapter.base_adapter import BaseProjectManagementAdapter
 
 import logging
@@ -17,7 +18,10 @@ class AsanaAdapter(BaseProjectManagementAdapter):
         """
             Initialize the AsanaAdapter with the configuration.
         """
-        self.api_client = asana.ApiClient(configuration=config)
+        configuration = asana.Configuration()
+        configuration.access_token = config["access_token"]
+        self.api_client = asana.ApiClient(configuration=configuration)  
+        self.config = config
         logger.info("AsanaAdapter initialized")
 
     def create(self, tasks: List[Dict]) -> List[Dict]:
@@ -30,4 +34,9 @@ class AsanaAdapter(BaseProjectManagementAdapter):
         Returns:
             List[Dict]: List of created tasks.
         """
-        pass 
+        try:
+            asana_service = AsanaService(config=self.config)
+            return asana_service.create_tasks(tasks)
+        except Exception as e:
+            logger.error(f"Failed to create tasks: {e}")
+            raise e
