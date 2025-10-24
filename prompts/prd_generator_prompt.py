@@ -13,7 +13,7 @@ Requirements:
 
 ---
 
-1. Project Title
+1. Project Title 
    Give a concise and descriptive title.
 
 2. Overview
