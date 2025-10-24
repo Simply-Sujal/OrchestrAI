@@ -5,6 +5,8 @@ from google.ai.generativelanguage_v1beta.types import Tool as GenAITool
 from dotenv import load_dotenv
 import os
 
+from prompts.project_planner_prompt import PROJECT_PLANNER_PROMPT
+
 load_dotenv()
 
 google_api_key = os.getenv("GOOGLE_API_KEY_9")
@@ -12,7 +14,7 @@ model = os.getenv("GOOGLE_GEMINI_MODEL")
 
 llm = ChatGoogleGenerativeAI(model=model, api_key=google_api_key)
 
-def prd_generator_tool(state: Dict[str, Any]):
+def prd_generator_tool(state: Dict[str, Any]) -> Dict[str, Any]:
     """
     Generate a PRD using online insights and return the response.
     """
@@ -26,3 +28,35 @@ def prd_generator_tool(state: Dict[str, Any]):
         f.write(response)
 
     return {"prd_text": response}
+
+
+def project_planner_tool(state: Dict[str, Any]):
+    """
+    Generate a project plan using the PRD text.
+    """
+    # Check if prd_text exists in state
+    if "prd_text" not in state:
+        return {"project_plan": "Error: No PRD text available"}
+    
+    try:
+        response = llm.invoke(
+            input=PROJECT_PLANNER_PROMPT.format(prd_text=state["prd_text"]),
+        ).content 
+
+        # Clean up any markdown formatting that might appear
+        cleaned_response = response.strip()
+        if cleaned_response.startswith("```json"):
+            cleaned_response = cleaned_response[7:]  # Remove ```json
+        if cleaned_response.startswith("```"):
+            cleaned_response = cleaned_response[3:]   # Remove ```
+        if cleaned_response.endswith("```"):
+            cleaned_response = cleaned_response[:-3]  # Remove trailing ```
+        cleaned_response = cleaned_response.strip()
+
+        #save raw project plan
+        with open("project_plan.json", "w") as f:
+            f.write(cleaned_response)
+
+        return {"project_plan": cleaned_response}
+    except Exception as e:
+        return {"project_plan": f"Error generating project plan: {str(e)}"}
