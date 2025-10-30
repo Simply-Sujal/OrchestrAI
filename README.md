@@ -421,9 +421,8 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## 📞 Contact & Support
 
-- **Issues**: [GitHub Issues](https://github.com/your-username/OrchestrAI/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-username/OrchestrAI/discussions)
-- **Email**: your.email@example.com
+- **Issues**: [GitHub Issues](https://github.com/Simply-Sujal/OrchestrAI/issues)
+- **Email**: sujal.kumar311@gmail.com
 
 ---
 
