@@ -5,6 +5,8 @@ from adapter.asana.service import AsanaService
 from adapter.base_adapter import BaseProjectManagementAdapter
 
 import logging
+
+from adapter.types import Task
 logger = logging.getLogger(__name__)
 
 
@@ -24,15 +26,15 @@ class AsanaAdapter(BaseProjectManagementAdapter):
         self.config = config
         logger.info("AsanaAdapter initialized")
 
-    def create(self, tasks: List[Dict]) -> List[Dict]:
+    def create(self, tasks: List[Task]) -> List[Task]:
         """
-            Create a multiple tasks in the project management tool.
+            Create multiple tasks in the project management tool.
 
         Args:
-            tasks (List[Dict]): List of tasks to be created.
+            tasks (List[Task]): List of tasks to be created.
         
         Returns:
-            List[Dict]: List of created tasks.
+            List[Task]: List of created tasks.
         """
         try:
             asana_service = AsanaService(config=self.config)
